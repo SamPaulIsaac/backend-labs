@@ -1,0 +1,80 @@
+# Prepare a plain text version of the markdown content for clarity
+txt_content = """Alarm API Reference
+
+This document outlines the available endpoints for the Alarm API, along with example `curl` commands for testing.
+
+Base URL:
+http://localhost:8080/api/alarms
+
+--------------------------------------------------
+
+1. Create Alarm
+POST /api/alarms
+Description: Create a new alarm.
+
+Request Body (JSON):
+{
+  "name": "Morning Alarm",
+  "time": "07:00",
+  "active": true
+}
+
+curl:
+curl -X POST http://localhost:8080/api/alarms \\
+     -H "Content-Type: application/json" \\
+     -d '{
+           "name": "Morning Alarm",
+           "time": "07:00",
+           "active": true
+         }'
+
+--------------------------------------------------
+
+2. Get All Alarms
+GET /api/alarms/all
+Description: Fetch all alarms.
+
+curl:
+curl -X GET http://localhost:8080/api/alarms/all
+
+--------------------------------------------------
+
+3. Get All Active Alarms
+GET /api/alarms/active
+Description: Fetch only active alarms.
+
+curl:
+curl -X GET http://localhost:8080/api/alarms/active
+
+--------------------------------------------------
+
+4. Update Alarm
+PUT /api/alarms/{id}
+Description: Update an existing alarm by ID.
+
+Request Body (JSON):
+{
+  "name": "Updated Alarm",
+  "time": "08:00",
+  "active": false
+}
+
+curl:
+curl -X PUT http://localhost:8080/api/alarms/1 \\
+     -H "Content-Type: application/json" \\
+     -d '{
+           "name": "Updated Alarm",
+           "time": "08:00",
+           "active": false
+         }'
+
+--------------------------------------------------
+
+5. Delete Alarm
+DELETE /api/alarms/{id}
+Description: Delete an alarm by ID.
+
+curl:
+curl -X DELETE http://localhost:8080/api/alarms/1
+"""
+
