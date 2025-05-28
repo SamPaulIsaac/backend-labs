@@ -1,0 +1,10 @@
+Microservice             | Primary Responsibilities
+------------------------ | --------------------------------------------------------------------------------------------------------------------------------
+User Service             | User registration, authentication, session/token management, profile management, authorization, verification, password recovery.
+Train Service            | Manage train details, routes, schedules, coach configurations, versioning of schedules.
+Availability Service     | Real-time seat inventory, quota management, concurrency control to prevent overbooking.
+Booking Service          | Ticket booking workflow, fare calculation, PNR generation, booking confirmation.
+Cancellation Service     | Handle ticket cancellations, refund processing, audit trails for cancellations.
+Admin Service            | Manage trains, user roles, booking audits, system-wide administration tasks.
+Notification Service     | Dispatch email/SMS alerts for bookings, cancellations, verification, and other user notifications.
+Analytics Service        | Generate reports on bookings, cancellations, usage trends, operational and business analytics.
