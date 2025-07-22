@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.1'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.sam'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+    // QR & BAR Code Generation
+    implementation group: 'com.google.zxing', name: 'core', version: '3.5.2'
+    implementation group: 'com.google.zxing', name: 'javase', version: '3.5.2'
+    implementation group: 'net.sourceforge.barbecue', name: 'barbecue', version: '1.5-beta1'
+    implementation group: 'org.krysalis', name: 'krysalis-barcode', version: '1.0beta'
+    implementation group: 'net.sf.barcode4j', name: 'barcode4j', version: '2.1'
+    implementation group: 'net.glxn', name: 'qrgen', version: '1.4'
+    implementation group: 'net.glxn.qrgen', name: 'javase', version: '2.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
