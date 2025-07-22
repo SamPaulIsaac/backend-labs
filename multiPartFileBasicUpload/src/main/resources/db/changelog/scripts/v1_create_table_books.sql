@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS books (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
-    author VARCHAR(50) NOT NULL,
-    published_year INT NOT NULL,
-    price DECIMAL NOT NULL
-);
