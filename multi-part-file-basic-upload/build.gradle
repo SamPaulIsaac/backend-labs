@@ -1,0 +1,54 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.1'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.sam'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    // In-Memory Database
+    runtimeOnly 'com.h2database:h2'
+    // DB Connector
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // Mapping entities to dtos and vice versa.
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.0'
+    // Loggers
+    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+    // Validation on entity and dto
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // DB Migration, versioning.
+    implementation 'org.liquibase:liquibase-core:4.20.0'
+    // Multipart CSV File
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.16.1'
+    implementation group: 'org.apache.commons', name: 'commons-csv', version: '1.10.0'
+    // Spring Boot Togglz
+    implementation group: 'org.togglz', name: 'togglz-spring-boot-starter', version: '4.4.0'
+    implementation 'org.togglz:togglz-console:4.4.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

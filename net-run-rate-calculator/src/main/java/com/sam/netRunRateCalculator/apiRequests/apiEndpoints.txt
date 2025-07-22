@@ -1,0 +1,28 @@
+1. Save a Team
+Endpoint: POST /api/nrr/saveTeam
+Request Param: teamName
+
+curl -X POST "http://localhost:8080/api/nrr/saveTeam?teamName=CSK"
+---------------------------------------------------------------------------------------------
+
+2. Save NRR Prerequisite
+Endpoint: POST /api/nrr/saveNRRPrerequisite
+Body: JSON payload of NRRPrerequisiteDto
+
+curl -X POST "http://localhost:8080/api/nrr/saveNRRPrerequisite" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "team": "CSK",
+    "matchNumber": 1,
+    "noOfRunsScored": 200,
+    "noOfRunsGiven": 190,
+    "noOfOversConsumed": 20.0,
+    "noOfOversBowled": 20.0
+  }'
+---------------------------------------------------------------------------------------------
+
+3. Get Net Run Rate for a Team
+Endpoint: GET /api/nrr/{team}
+
+curl -X GET "http://localhost:8080/api/nrr/CSK"
+---------------------------------------------------------------------------------------------
