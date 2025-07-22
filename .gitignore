@@ -1,0 +1,53 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+
+# IDEs and editors
+.idea/
+*.iml
+*.ipr
+*.iws
+*.suo
+*.class
+*.psd
+*.db
+.DS_Store
+*.swp
+*.swn
+*.bak
+*.tmp
+
+# Eclipse
+*.classpath
+*.project
+*.settings/
+
+# IntelliJ
+*.idea/
+*.iws
+*.iml
+out/
+
+# Maven
+target/
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Gradle (if used)
+.gradle/
+build/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Environment and secrets
+.env
+*.env
+.env.*
