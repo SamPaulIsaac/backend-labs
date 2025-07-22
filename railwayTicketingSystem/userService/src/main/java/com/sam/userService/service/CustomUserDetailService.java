@@ -41,6 +41,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());
 
+        authorities.forEach(auth -> System.out.println("Authority: " + auth.getAuthority()));
         return CustomUserDetails.builder()
                 .id(user.getId())
                 .username(user.getName())

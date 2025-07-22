@@ -28,7 +28,7 @@ public class EmailService {
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = VerificationToken.builder().user(user).expiryDate(LocalDateTime.now().plusMinutes(2)).token(token).build();
         verificationTokenRepository.saveAndFlush(verificationToken);
-        String verificationUrl = "http://localhost:8080/api/user/verify?token=" + token;
+        String verificationUrl = "http://localhost:8081/api/user/verify?token=" + token;
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
         mailMessage.setSubject("Verify your email");

@@ -97,14 +97,14 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
+       // RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
         return LoginResponseDTO.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .roles(user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .jwtToken(jwtUtils.generateJwtToken(authentication))
-                .refreshToken(refreshToken.getToken())
+               // .refreshToken(refreshToken.getToken())
                 .build();
     }
 

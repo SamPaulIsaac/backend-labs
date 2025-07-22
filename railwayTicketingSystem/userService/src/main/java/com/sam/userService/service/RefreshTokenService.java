@@ -6,16 +6,23 @@ import com.sam.userService.repository.RefreshTokenRepository;
 import com.sam.userService.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+
 
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import static jakarta.transaction.Transactional.TxType.REQUIRES_NEW;
+
 @Service
 @AllArgsConstructor
+@Slf4j
 public class RefreshTokenService {
 
 //    @Value("${app.jwt.refreshExpirationMs}")
@@ -26,11 +33,15 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(String username) {
+        log.info("Create Refresh token is invoked.");
         User user = userRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
+        log.info("Call to delete existing refresh token for user.");
         // Optionally delete existing refresh tokens for user to avoid duplicates
-        refreshTokenRepository.deleteByUser(user);
+        deleteRefreshTokensByUser(user);
+        //int deletedToken = refreshTokenRepository.deleteByUser(user);
+        log.info("Deleted existing refresh token for user.");
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
@@ -38,6 +49,11 @@ public class RefreshTokenService {
                 .token(UUID.randomUUID().toString()).build();
 
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    @Transactional(value = REQUIRES_NEW)
+    public int deleteRefreshTokensByUser(User user) {
+        return refreshTokenRepository.deleteByUser(user);
     }
 
     /**

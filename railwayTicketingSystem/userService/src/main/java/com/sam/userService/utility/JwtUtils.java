@@ -35,7 +35,13 @@ public class JwtUtils {
     public String generateJwtToken(Authentication authentication) {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", customUserDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
+
         return Jwts.builder()
+                .claims(claims)
                 .subject(customUserDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + expiration))
@@ -49,9 +55,11 @@ public class JwtUtils {
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
+        System.out.println("Generating JWT with roles: " + claims.get("roles"));
 
         return Jwts.builder()
-                .subject(String.valueOf(claims))
+                .claims(claims)
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
