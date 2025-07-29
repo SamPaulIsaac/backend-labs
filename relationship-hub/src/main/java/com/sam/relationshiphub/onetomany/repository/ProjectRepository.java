@@ -1,0 +1,9 @@
+package com.sam.relationshiphub.onetomany.repository;
+
+import com.sam.relationshiphub.onetomany.entity.Project;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ProjectRepository extends JpaRepository<Project, Long> {
+}
