@@ -1,0 +1,70 @@
+✅ OTP Flow – Local Testing (Spring Boot + Redis + Twilio)
+==========================================================
+
+1. Send OTP to the given phone number
+-------------------------------------
+curl -X POST "http://localhost:8088/api/otp/send?phone=1234567890"
+
+Response:
+  OTP sent to 8344232851
+
+Note:
+  - Redis Keys created:
+      • OTP:<phone>
+      • REQ:<phone>
+      • OTP_RESEND_TS:<phone>
+  - OTP will be printed in console logs (for local testing)
+
+----------------------------------------------------------
+
+2. Verify the OTP entered by the user
+-------------------------------------
+curl -X POST "http://localhost:8088/api/otp/verify?phone=1234567890&otp=628023"
+
+Note:
+  Replace 628023 with the actual OTP received in SMS or logs
+
+Response:
+  - ✅ Success:
+      OTP verified successfully.
+  - ❌ Failure:
+      Invalid OTP. You have X attempt(s) left.
+      Too many invalid attempts. OTP blocked.
+      OTP expired or not requested.
+
+----------------------------------------------------------
+
+3. Simulate Delivery Status Callback (DLR)
+------------------------------------------
+curl -X POST http://localhost:8088/api/otp/sms/dlr \
+  -H "Content-Type: application/json" \
+  -d '{"phone": "1234567890", "status": "DELIVERED"}'
+
+Response:
+  DLR received
+
+Log Entry:
+  📩 Received DLR: Phone=1234567890, Status=DELIVERED
+
+----------------------------------------------------------
+
+4. Check OTP Metrics
+---------------------
+curl http://localhost:8088/api/otp/metrics
+
+Example Response:
+{
+  "sent": "1",
+  "verified": "1",
+  "failed": "0"
+}
+
+----------------------------------------------------------
+
+NOTES:
+  • OTP is valid for 5 minutes
+  • Maximum 3 verification attempts
+  • Resend allowed after 30 seconds
+  • Twilio handles SMS delivery
+  • Redis stores all runtime data and metrics
+

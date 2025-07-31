@@ -1,2 +1,0 @@
-curl -X POST "http://localhost:8081/api/otp/send?mobileNumber=+918344232851"
-curl -X POST "http://localhost:8081/api/otp/verify?mobileNumber=+918344232851&otp=944864"
