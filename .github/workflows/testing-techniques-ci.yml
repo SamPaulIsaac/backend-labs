@@ -1,0 +1,31 @@
+name: CI - Testing Techniques
+
+on:
+  push:
+    paths:
+      - 'testing-techniques/**'
+  pull_request:
+    paths:
+      - 'testing-techniques/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant permission to execute Gradle
+        working-directory: testing-techniques
+        run: chmod +x gradlew
+
+      - name: Build and test with Gradle
+        working-directory: testing-techniques
+        run: ./gradlew clean build
