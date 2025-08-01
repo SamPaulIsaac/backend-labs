@@ -51,3 +51,6 @@ Thumbs.db
 .env
 *.env
 .env.*
+
+# Allow Gradle wrapper JAR
+!testing-techniques/gradle/wrapper/gradle-wrapper.jar
