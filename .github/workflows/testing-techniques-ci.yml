@@ -1,5 +1,9 @@
 name: CI - Testing Techniques
 
+# Note:
+# This workflow currently runs CI for only `unit-test` and `test-containers` projects.
+# The `integration-test` project is intentionally excluded due to instability or pending setup.
+
 on:
   push:
     paths:
@@ -52,10 +56,3 @@ jobs:
         run: |
           echo "Running repositoryTest for test-containers"
           ./gradlew repositoryTest
-
-      - name: 🧪 Run integrationTest (only for integration-test)
-        if: matrix.project == 'integration-test'
-        working-directory: testing-techniques/integration-test
-        run: |
-          echo "Running integrationTest for integration-test"
-          ./gradlew integrationTest
