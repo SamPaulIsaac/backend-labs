@@ -8,7 +8,7 @@ This document outlines the **latest approved dependency versions** used across p
 |------------------|-------------|--------------------------------|--------------|
 | Java             | 21          | Standardize across all builds  | 2025-08-01   |
 | Gradle Wrapper   | 8.5         | Run `./gradlew wrapper --gradle-version 8.5` | 2025-08-01   |
-| Spring Boot      | 3.2.4       | Use with Spring projects       | 2025-08-01   |
+| Spring Boot      | 3.5.4       | Use with Spring projects       | 2025-08-01   |
 | JUnit            | 5.10.x      | Prefer Jupiter engine          | 2025-08-01   |
 | Testcontainers   | 1.19.x      | For integration testing        | 2025-08-01   |
 
