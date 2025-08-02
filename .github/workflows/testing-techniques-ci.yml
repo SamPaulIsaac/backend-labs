@@ -16,6 +16,7 @@ jobs:
       matrix:
         project:
           - unit-test
+          - integration-test
 
     steps:
       - name: Checkout repository
