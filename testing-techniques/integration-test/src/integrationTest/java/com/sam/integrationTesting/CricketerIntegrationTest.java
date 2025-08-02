@@ -19,7 +19,11 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("integrationTest")
+
+// Activate one profile at a time depending on the DB target.
+// Use 'integration-h2' for CI or in-memory testing.
+// Use 'integration-mysql' for local MySQL DB testing.
+@ActiveProfiles("integration-h2") // <-- switch to "integration-mysql" to test with real MySQL
 public class CricketerIntegrationTest {
 
     @LocalServerPort
@@ -31,38 +35,29 @@ public class CricketerIntegrationTest {
     @Autowired
     private CricketerRepository cricketerRepository;
 
-
     @BeforeEach
     public void setup() {
-        cleanUp();
-        // Create a new Cricketer entity and save it to the repository
+        cricketerRepository.deleteAll();
         Cricketer cricketer = new Cricketer();
         cricketer.setName("Sachin Tendulkar");
         cricketer.setCountry("India");
         cricketer.setRuns(18000);
-       Cricketer saved = cricketerRepository.save(cricketer);
-        System.out.println("Saved Cricketer: "+saved);
-    }
-
-    private void cleanUp() {
-        cricketerRepository.deleteAll();
+        cricketerRepository.save(cricketer);
     }
 
     @Test
     public void shouldReturnCricketer() {
-        // Test the whole stack with a real HTTP request
         String url = "http://localhost:" + port + "/api/cricketers";
         ResponseEntity<List<Cricketer>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<>() {
-                }
+                new ParameterizedTypeReference<>() {}
         );
+
         System.out.println("Response: " + response);
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
         assertThat(Objects.requireNonNull(response.getBody()).size()).isEqualTo(1L);
         assertThat(response.getBody().get(0).getName()).isEqualTo("Sachin Tendulkar");
     }
 }
-

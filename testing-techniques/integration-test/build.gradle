@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.3'
-	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.springframework.boot' version '3.5.4'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.sam'
@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -52,6 +52,8 @@ dependencies {
 	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-test'
 	integrationTestRuntimeOnly 'com.mysql:mysql-connector-j'
+	// Add H2 database support for integration tests
+	integrationTestRuntimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
