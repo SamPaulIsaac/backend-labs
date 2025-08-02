@@ -1,8 +1,8 @@
 package com.sam.multipartFileUpload.book.controller;
 
 
-import com.sam.springBootMultipartFileUpload.book.entity.Book;
-import com.sam.springBootMultipartFileUpload.book.service.BookService;
+import com.sam.multipartFileUpload.book.entity.Book;
+import com.sam.multipartFileUpload.book.service.BookService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
