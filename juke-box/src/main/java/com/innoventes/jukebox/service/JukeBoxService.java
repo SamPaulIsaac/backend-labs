@@ -7,7 +7,7 @@ import com.innoventes.jukebox.domain.Musician;
 import com.innoventes.jukebox.exception.BadRequestException;
 import com.innoventes.jukebox.repository.MusicAlbumRepository;
 import com.innoventes.jukebox.repository.MusicianRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +15,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JukeBoxService {
+
     private final MusicAlbumRepository musicAlbumRepository;
     private final MusicianRepository musicianRepository;
+
+    // === Music Album ===
 
     public Optional<MusicAlbum> checkIfAlbumAlreadyExist(String albumName) {
         return musicAlbumRepository.findByAlbumName(albumName);
@@ -28,86 +31,81 @@ public class JukeBoxService {
         return musicAlbumRepository.findAll();
     }
 
-    public MusicAlbum createMusicAlbum(MusicAlbumRequestDto musicAlbumRequestDto) {
-        MusicAlbum musicAlbumToBeSaved = MusicAlbum.builder()
-                .albumName(musicAlbumRequestDto.getAlbumName())
-                .dateOfRelease(musicAlbumRequestDto.getDateOfRelease())
-                .description(musicAlbumRequestDto.getDescription())
-                .genre(musicAlbumRequestDto.getGenre())
-                .price(musicAlbumRequestDto.getPrice())
-                .description(musicAlbumRequestDto.getDescription())
+    public List<MusicAlbum> getMusicAlbumsByMusician(String musicianName) {
+        return musicAlbumRepository.findByMusicianOrderByPrice(musicianName);
+    }
+
+    public MusicAlbum createMusicAlbum(MusicAlbumRequestDto request) {
+        MusicAlbum album = MusicAlbum.builder()
+                .albumName(request.getAlbumName())
+                .dateOfRelease(request.getDateOfRelease())
+                .description(request.getDescription())
+                .genre(request.getGenre())
+                .price(request.getPrice())
                 .build();
-        musicAlbumToBeSaved.setMusicianList(
-                createMusiciansList(musicAlbumToBeSaved, musicAlbumRequestDto.getMusicianRequestDtoList()));
-        return musicAlbumRepository.save(musicAlbumToBeSaved);
+
+        album.setMusicianList(
+                mapMusicianRequestListToEntities(album, request.getMusicianRequestDtoList())
+        );
+
+        return musicAlbumRepository.save(album);
     }
 
-    private List<Musician> createMusiciansList(MusicAlbum musicAlbumToBeUpdated,
-                                               List<MusicianRequestDto> musicianRequestDtoList) {
-        return musicianRequestDtoList.stream().map(
-                musician -> createMusician(musicAlbumToBeUpdated, musician)).collect(Collectors.toList());
+    public MusicAlbum updateMusicAlbum(MusicAlbum album, MusicAlbumRequestDto request) {
+        album.setDateOfRelease(request.getDateOfRelease());
+        album.setDescription(request.getDescription());
+        album.setGenre(request.getGenre());
+        album.setPrice(request.getPrice());
+
+        album.getMusicianList().clear();
+        album.getMusicianList().addAll(
+                mapMusicianRequestListToEntities(album, request.getMusicianRequestDtoList())
+        );
+
+        return musicAlbumRepository.save(album);
     }
 
-    private Musician createMusician(MusicAlbum musicAlbumToBeUpdated, MusicianRequestDto musicianRequestDto) {
-        return Musician.builder()
-                .name(musicianRequestDto.getName())
-                .musicianType(musicianRequestDto.getMusicianType())
-                .musicAlbum(musicAlbumToBeUpdated)
-                .build();
-    }
-
-    public MusicAlbum updateMusicAlbum(MusicAlbum musicAlbum, MusicAlbumRequestDto musicAlbumRequestDto) {
-        musicAlbum.setDateOfRelease(musicAlbumRequestDto.getDateOfRelease());
-        musicAlbum.setDescription(musicAlbumRequestDto.getDescription());
-        musicAlbum.setGenre(musicAlbumRequestDto.getGenre());
-        musicAlbum.setPrice(musicAlbumRequestDto.getPrice());
-        musicAlbum.getMusicianList().clear();
-        musicAlbum.getMusicianList().addAll(
-                updateMusiciansList(musicAlbum, musicAlbumRequestDto.getMusicianRequestDtoList()));
-        return musicAlbumRepository.save(musicAlbum);
-    }
-
-    private List<Musician> updateMusiciansList(MusicAlbum musicAlbum, List<MusicianRequestDto> musicianRequestDtoList) {
-        return musicianRequestDtoList.stream().map(
-                musician -> updateMusician(musicAlbum, musician)).collect(Collectors.toList());
-    }
-
-    private Musician updateMusician(MusicAlbum musicAlbum, MusicianRequestDto musicianRequestDto) {
-        return Musician.builder()
-                .name(musicianRequestDto.getName())
-                .musicianType(musicianRequestDto.getMusicianType())
-                .musicAlbum(musicAlbum)
-                .build();
-    }
-
-    public List<MusicAlbum> getMusicAlbumsByMusician(String musician) {
-        return musicAlbumRepository.findByMusicianOrderByPrice(musician);
-    }
+    // === Musician ===
 
     public Optional<Musician> checkIfMusicianAlreadyExist(String name) {
         return musicianRepository.findByName(name);
     }
 
-    public Musician createMusician(MusicianRequestDto musicianRequestDto) {
-        if (checkIfAlbumAlreadyExist(musicianRequestDto.getMusicAlbumRequestDto().getAlbumName()).isPresent()) {
-            return musicianRepository.save(Musician.builder()
-                    .name(musicianRequestDto.getName())
-                    .musicianType(musicianRequestDto.getMusicianType())
-                    .musicAlbum(
-                            checkIfAlbumAlreadyExist(musicianRequestDto.getMusicAlbumRequestDto().getAlbumName()).get())
-                    .build());
-        } else {
-            throw new BadRequestException("Requested Music Album doesn't exist.");
-        }
+    public Musician createMusician(MusicianRequestDto request) {
+        MusicAlbum album = musicAlbumRepository.findByAlbumName(
+                request.getMusicAlbumRequestDto().getAlbumName()
+        ).orElseThrow(() -> new BadRequestException("Requested Music Album doesn't exist."));
+
+        return musicianRepository.save(
+                Musician.builder()
+                        .name(request.getName())
+                        .musicianType(request.getMusicianType())
+                        .musicAlbum(album)
+                        .build()
+        );
     }
 
-    public Musician updateMusician(Musician musician, MusicianRequestDto musicianRequestDto) {
-        musician.setName(musicianRequestDto.getName());
-        musician.setMusicianType(musicianRequestDto.getMusicianType());
+    public Musician updateMusician(Musician musician, MusicianRequestDto request) {
+        musician.setName(request.getName());
+        musician.setMusicianType(request.getMusicianType());
         return musicianRepository.save(musician);
     }
 
     public List<Musician> getMusicianByAlbumName(String albumName) {
         return musicianRepository.findByMusicianOrderByMusicianName(albumName);
     }
+
+    // === Private Mappers ===
+
+    private List<Musician> mapMusicianRequestListToEntities(MusicAlbum album, List<MusicianRequestDto> requests) {
+        return requests.stream()
+                .map(req -> Musician.builder()
+                        .name(req.getName())
+                        .musicianType(req.getMusicianType())
+                        .musicAlbum(album)
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
 }

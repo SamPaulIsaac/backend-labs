@@ -9,135 +9,111 @@ import com.innoventes.jukebox.domain.MusicAlbum;
 import com.innoventes.jukebox.domain.Musician;
 import com.innoventes.jukebox.exception.BadRequestException;
 import com.innoventes.jukebox.service.JukeBoxService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-@RequestMapping(value = "/jukeBox/",
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.ALL_VALUE})
-@RestController
-@AllArgsConstructor
 @Slf4j
+@RestController
+@RequestMapping(
+        value = "/jukeBox",
+        produces = {MediaType.APPLICATION_JSON_VALUE}
+)
+@RequiredArgsConstructor
 public class JukeBoxController {
-    private static final String MANDATORY_FIELDS_ERROR_MESSAGE =
-            "Album Name and Price Fields are Mandatory.";
-    private static final String INVALID_ALBUM_NAME_ERROR_MESSAGE =
-            "Album Name should be minimum 5 characters.";
-    private static final String INVALID_PRICE_ERROR_MESSAGE =
-            "Price value should be between 100 to 1000.";
-    private static final String INVALID_MUSICIAN_NAME_ERROR_MESSAGE =
-            "Album Name and Price Fields are Mandatory.";
 
+    private static final String MANDATORY_FIELDS_ERROR = "Album name and release date are required.";
+    private static final String ALBUM_NAME_TOO_SHORT_ERROR = "Album name must be at least 5 characters.";
+    private static final String PRICE_RANGE_ERROR = "Price must be between 100 and 1000.";
+    private static final String MUSICIAN_NAME_INVALID = "Musician name must be at least 3 characters.";
+
+    
     private final JukeBoxService jukeBoxService;
     private final JukeBoxResponseAssembler jukeBoxResponseAssembler;
 
-    @PostMapping("/createOrUpdateMusicAlbum/")
+    @PostMapping("/createOrUpdateMusicAlbum")
     public MusicAlbumResponseDto createOrUpdateMusicAlbum(
-            @RequestBody MusicAlbumRequestDto musicAlbumRequestDto) {
+            @RequestBody MusicAlbumRequestDto request) {
 
-        /* Below method validate the request body
-         1. Check for mandatory fields.
-         2. Verify certain fields to have required values. */
-        ValidatedRequestBody(musicAlbumRequestDto);
+        validateMusicAlbumRequest(request);
 
-        /* Method to check the request album already exist
-         1. If yes, then perform update.
-         2. If no, then create. */
-        Optional<MusicAlbum> musicAlbums =
-                jukeBoxService.checkIfAlbumAlreadyExist(musicAlbumRequestDto.getAlbumName());
-        if (!musicAlbums.isPresent()) {
-            log.info("Request to Create Music Album {}.", musicAlbumRequestDto);
-            MusicAlbum savedMusicAlbum = jukeBoxService.createMusicAlbum(musicAlbumRequestDto);
-            return jukeBoxResponseAssembler.toMusicDto(savedMusicAlbum);
+        Optional<MusicAlbum> existingAlbum = jukeBoxService.checkIfAlbumAlreadyExist(request.getAlbumName());
+        MusicAlbum album;
+
+        if (existingAlbum.isPresent()) {
+            log.info("Updating existing music album: {}", request.getAlbumName());
+            album = jukeBoxService.updateMusicAlbum(existingAlbum.get(), request);
         } else {
-            log.info("Request to Update Existing Music Album {}.", musicAlbumRequestDto);
-            MusicAlbum updatedMusicAlbum = jukeBoxService.updateMusicAlbum(musicAlbums.get(), musicAlbumRequestDto);
-            return jukeBoxResponseAssembler.toMusicDto(updatedMusicAlbum);
+            log.info("Creating new music album: {}", request.getAlbumName());
+            album = jukeBoxService.createMusicAlbum(request);
         }
+
+        return jukeBoxResponseAssembler.toMusicDto(album);
     }
 
-    private void ValidatedRequestBody(MusicAlbumRequestDto musicAlbumRequestDto) {
-        if (!isAllMandatoryFieldsPresent(musicAlbumRequestDto)) {
-            throw new BadRequestException(MANDATORY_FIELDS_ERROR_MESSAGE);
+    @PostMapping("/createOrUpdateMusician")
+    public MusicianResponseDto createOrUpdateMusician(@RequestBody MusicianRequestDto request) {
+        validateMusicianRequest(request);
+
+        Optional<Musician> existingMusician = jukeBoxService.checkIfMusicianAlreadyExist(request.getName());
+        Musician musician;
+
+        if (existingMusician.isPresent()) {
+            log.info("Updating existing musician: {}", request.getName());
+            musician = jukeBoxService.updateMusician(existingMusician.get(), request);
+        } else {
+            log.info("Creating new musician: {}", request.getName());
+            musician = jukeBoxService.createMusician(request);
         }
-        if (!isRequestedAlbumNameValid(musicAlbumRequestDto)) {
-            throw new BadRequestException(INVALID_ALBUM_NAME_ERROR_MESSAGE);
-        }
-        if (!isRequestedPriceValid(musicAlbumRequestDto)) {
-            throw new BadRequestException(INVALID_PRICE_ERROR_MESSAGE);
-        }
-    }
 
-
-    private boolean isAllMandatoryFieldsPresent(MusicAlbumRequestDto musicAlbumRequestDto) {
-        return null != musicAlbumRequestDto.getAlbumName() && null != musicAlbumRequestDto.getDateOfRelease();
-    }
-
-    private boolean isRequestedAlbumNameValid(MusicAlbumRequestDto musicAlbumRequestDto) {
-        return musicAlbumRequestDto.getAlbumName().length() >= 5;
-    }
-
-    private boolean isRequestedPriceValid(MusicAlbumRequestDto musicAlbumRequestDto) {
-        return (musicAlbumRequestDto.getPrice() >= 100 && musicAlbumRequestDto.getPrice() <= 1000);
+        return jukeBoxResponseAssembler.toMusicianDto(musician);
     }
 
     @GetMapping("/searchMusicAlbumsByReleaseDate")
-    public List<MusicAlbumResponseDto> retrieveMusicAlbumsByReleaseDate() {
-        log.info("Search Request to Retrieve MusicAlbums By Release Date");
-        List<MusicAlbum> musicAlbums = jukeBoxService.getMusicAlbums();
-        musicAlbums.sort(Comparator.comparing(MusicAlbum::getDateOfRelease));
-        return jukeBoxResponseAssembler.assembleMusicAlbumsDto(musicAlbums);
+    public List<MusicAlbumResponseDto> getAlbumsSortedByReleaseDate() {
+        log.info("Fetching all music albums sorted by release date");
+        List<MusicAlbum> albums = jukeBoxService.getMusicAlbums();
+        albums.sort(Comparator.comparing(MusicAlbum::getDateOfRelease));
+        return jukeBoxResponseAssembler.assembleMusicAlbumsDto(albums);
     }
 
     @GetMapping("/searchMusicAlbumsByMusician")
-    public List<MusicAlbumResponseDto> retrieveMusicAlbumsByMusician(
-            @RequestParam String musicianName) {
-        log.info("Search Request to Retrieve MusicAlbums For Musician {}.", musicianName);
-        List<MusicAlbum> musicAlbums = jukeBoxService.getMusicAlbumsByMusician(musicianName);
-        return jukeBoxResponseAssembler.assembleMusicAlbumsDto(musicAlbums);
-    }
-
-    @PostMapping("createOrUpdateMusician/")
-    public MusicianResponseDto createOrUpdateMusician(@RequestBody MusicianRequestDto musicianRequestDto) {
-
-        // Verify musician name to be present and its length should be minimum of 3 characters.
-        if (null == musicianRequestDto.getName() || musicianRequestDto.getName().length() < 3) {
-            throw new BadRequestException(INVALID_MUSICIAN_NAME_ERROR_MESSAGE);
-        }
-
-        /* Method to check the request musician already exist
-            1. If yes, then perform update.
-            2. If no, then create. */
-        Optional<Musician> musicians =
-                jukeBoxService.checkIfMusicianAlreadyExist(musicianRequestDto.getName());
-
-        if (!musicians.isPresent()) {
-            log.info("Request to Create Musician {}.", musicianRequestDto);
-            Musician savedMusician = jukeBoxService.createMusician(musicianRequestDto);
-            return jukeBoxResponseAssembler.toMusicianDto(savedMusician);
-        } else {
-            log.info("Request to Update Existing Musician {}.", musicianRequestDto);
-            Musician updatedMusician = jukeBoxService.updateMusician(musicians.get(), musicianRequestDto);
-            return jukeBoxResponseAssembler.toMusicianDto(updatedMusician);
-        }
+    public List<MusicAlbumResponseDto> getAlbumsByMusician(@RequestParam String musicianName) {
+        log.info("Fetching albums by musician: {}", musicianName);
+        List<MusicAlbum> albums = jukeBoxService.getMusicAlbumsByMusician(musicianName);
+        return jukeBoxResponseAssembler.assembleMusicAlbumsDto(albums);
     }
 
     @GetMapping("/searchMusicianByMusicAlbumName")
-    public List<MusicianResponseDto> retrieveMusicianByAlbumName(
-            @RequestParam String albumName) {
-        log.info("Search Request to Retrieve MusicAlbums By Album Name {}.", albumName);
-        List<Musician> musicAlbums = jukeBoxService.getMusicianByAlbumName(albumName);
-        return jukeBoxResponseAssembler.buildMusicianDto(musicAlbums);
+    public List<MusicianResponseDto> getMusiciansByAlbumName(@RequestParam String albumName) {
+        log.info("Fetching musicians by album name: {}", albumName);
+        List<Musician> musicians = jukeBoxService.getMusicianByAlbumName(albumName);
+        return jukeBoxResponseAssembler.buildMusicianDto(musicians);
     }
-}
 
+    // --- Private validation methods ---
+
+    public void validateMusicAlbumRequest(MusicAlbumRequestDto request) {
+        if (request.getAlbumName() == null || request.getDateOfRelease() == null) {
+            throw new BadRequestException(MANDATORY_FIELDS_ERROR);
+        }
+        if (request.getAlbumName().length() < 5) {
+            throw new BadRequestException(ALBUM_NAME_TOO_SHORT_ERROR);
+        }
+        if (request.getPrice() < 100 || request.getPrice() > 1000) {
+            throw new BadRequestException(PRICE_RANGE_ERROR);
+        }
+    }
+
+    public void validateMusicianRequest(MusicianRequestDto request) {
+        if (request.getName() == null || request.getName().length() < 3) {
+            throw new BadRequestException(MUSICIAN_NAME_INVALID);
+        }
+    }
+
+}

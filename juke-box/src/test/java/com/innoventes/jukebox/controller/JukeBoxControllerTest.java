@@ -20,16 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicAlbumRequestDtoToSave;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicAlbumRequestDtoToUpdate;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicAlbumResponseDto;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicAlbums;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicianRequestDtoToSave;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicianRequestDtoToUpdate;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicianResponseDto;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicians;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.updatedMusicAlbums;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.updatedMusician;
+import static com.innoventes.jukebox.helper.JukeBoxHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -152,7 +143,7 @@ public class JukeBoxControllerTest {
         when(jukeBoxService.getMusicAlbums()).thenReturn(musicAlbums);
         when(jukeBoxResponseAssembler.assembleMusicAlbumsDto(musicAlbums)).thenReturn(expectedMusicianResponseDto);
 
-        List<MusicAlbumResponseDto> musicAlbumResponseDtos = jukeBoxController.retrieveMusicAlbumsByReleaseDate();
+        List<MusicAlbumResponseDto> musicAlbumResponseDtos = jukeBoxController.getAlbumsSortedByReleaseDate();
         assertThat(musicAlbumResponseDtos).isNotEmpty();
         assertThat(musicAlbumResponseDtos).hasSize(2);
         assertThat(musicAlbumResponseDtos).containsExactlyElementsOf(expectedMusicianResponseDto);
@@ -174,7 +165,7 @@ public class JukeBoxControllerTest {
         when(jukeBoxResponseAssembler.assembleMusicAlbumsDto(musicAlbums)).thenReturn(expectedMusicianResponseDto);
 
         List<MusicAlbumResponseDto> musicAlbumResponseDtos =
-                jukeBoxController.retrieveMusicAlbumsByMusician(musicianName);
+                jukeBoxController.getAlbumsByMusician(musicianName);
         assertThat(musicAlbumResponseDtos).isNotEmpty();
         assertThat(musicAlbumResponseDtos).hasSize(2);
         assertThat(musicAlbumResponseDtos).containsAll(expectedMusicianResponseDto);
@@ -195,7 +186,7 @@ public class JukeBoxControllerTest {
         when(jukeBoxResponseAssembler.buildMusicianDto(musicians)).thenReturn(expectedMusicianResponseDtoList);
 
         List<MusicianResponseDto> musicianResponseDtos =
-                jukeBoxController.retrieveMusicianByAlbumName(albumName);
+                jukeBoxController.getMusiciansByAlbumName(albumName);
 
         assertThat(musicianResponseDtos).isNotEmpty();
         assertThat(musicianResponseDtos).hasSize(2);

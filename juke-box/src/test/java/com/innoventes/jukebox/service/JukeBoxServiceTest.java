@@ -15,11 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Optional;
 
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicAlbumRequestDtoToSave;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicAlbumRequestDtoToUpdate;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicAlbums;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicianRequestDtoAlongWithMusicAlbumToSave;
-import static com.innoventes.jukebox.helper.JukeBoxHelper.buildMusicians;
+import static com.innoventes.jukebox.helper.JukeBoxHelper.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
