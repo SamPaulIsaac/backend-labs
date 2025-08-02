@@ -34,4 +34,9 @@ jobs:
 
       - name: Build and test ${{ matrix.project }}
         working-directory: testing-techniques/${{ matrix.project }}
-        run: ./gradlew clean build
+        run: |
+          ./gradlew clean build
+          if [ "${{ matrix.project }}" = "test-containers" ]; then
+            echo "Running additional repositoryTest for test-containers"
+            ./gradlew repositoryTest
+          fi
