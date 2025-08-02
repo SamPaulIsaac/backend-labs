@@ -73,6 +73,6 @@ public class CricketerRepositoryTest {
 
     @AfterAll
     public static void tearDown() {
-        mysqlContainer.stop(); // optional; containers stop automatically after test scope
+        mysqlContainer.stop(); // optional; containers stop automatically after test scope.
     }
 }
