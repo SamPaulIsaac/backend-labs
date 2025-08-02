@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // Activate one profile at a time depending on the DB target.
 // Use 'integration-h2' for CI or in-memory testing.
 // Use 'integration-mysql' for local MySQL DB testing.
-@ActiveProfiles("integration-h2") // <-- switch to "integration-mysql" to test with real MySQL
+@ActiveProfiles("integration-h2")  // <-- switch to "integration-mysql" to test with real MySQL
 public class CricketerIntegrationTest {
 
     @LocalServerPort
