@@ -1,0 +1,20 @@
+# Maven target directory
+target/
+# Grade build directory
+build/
+
+# IDE files
+.idea/
+.vscode/
+
+# Logs
+logs/
+
+
+README.md
+HELP.md
+.gradle
+.DS_STORE
+
+# Temporary files
+*.tmp
