@@ -37,8 +37,16 @@ public class CricketerRepositoryTest {
 
 
     public void buildCricketers() {
-        Cricketer cricketer1 = new Cricketer(1L, "Player1", "Country1", 5000);
-        Cricketer cricketer2 = new Cricketer(2L, "Player2", "Country2", 6000);
-        cricketerRepository.saveAll(Arrays.asList(cricketer1, cricketer2));
+        Cricketer cricketer1 = Cricketer.builder()
+                .name("Player1")
+                .country("Country1")
+                .runs(5000)
+                .build();
+        Cricketer cricketer2 = Cricketer.builder()
+                .name("Player2")
+                .country("Country2")
+                .runs(6000)
+                .build();
+        cricketerRepository.saveAllAndFlush(Arrays.asList(cricketer1, cricketer2));
     }
 }
