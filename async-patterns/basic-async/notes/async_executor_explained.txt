@@ -1,0 +1,56 @@
+🔧 Async Executor Configuration – Explained
+
+This project uses a custom async executor to better control how tasks run in the background using Spring's @Async.
+
+-----------------------------------------------------
+❓ Why not use the default?
+
+Spring uses SimpleAsyncTaskExecutor by default:
+- Creates a new thread for every task
+- No thread reuse, no limit on threads
+- Okay for quick tests or very lightweight apps
+- But can lead to too many threads → memory issues, degraded performance
+
+-----------------------------------------------------
+✅ What this custom executor does
+
+@Bean(name = "asyncExecutor")
+public Executor asyncExecutor() {
+    log.info("Initializing Async Executor");
+    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    executor.setCorePoolSize(3);
+    executor.setMaxPoolSize(10);
+    executor.setQueueCapacity(100);
+    executor.setThreadNamePrefix("AsyncThread-");
+    executor.initialize();
+    return executor;
+}
+
+Explanation:
+
+- corePoolSize = 3
+  → 3 threads will always be ready to process tasks
+
+- maxPoolSize = 10
+  → Can go up to 10 threads if tasks flood in and queue fills up
+
+- queueCapacity = 100
+  → Holds up to 100 waiting tasks before adding new threads
+
+- threadNamePrefix = AsyncThread-
+  → Helps identify async threads in logs
+
+-----------------------------------------------------
+⚙️ Scenario: 100 tasks arrive quickly
+
+→ First 3 tasks run on core threads
+→ Next 97 tasks wait in the queue
+→ If more than 100 tasks are queued, executor creates extra threads (up to 10 total)
+→ Beyond that, if queue is full and all 10 threads are busy, new tasks are rejected (unless custom handler used)
+
+-----------------------------------------------------
+✅ Why this is better
+
+- Prevents unbounded thread creation
+- Ensures stable async behavior under load
+- Gives you full control over how your async tasks behave

@@ -1,0 +1,3 @@
+# ✅ Fetch combined customer and order details (happy path)
+curl -X GET http://localhost:8080/api/customers/details
+

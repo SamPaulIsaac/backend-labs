@@ -1,0 +1,7 @@
+# Register a new customer (basic async fire-and-forget logging demo)
+curl -X POST http://localhost:8080/api/customers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sam",
+    "email": "sam@example.com"
+  }'
