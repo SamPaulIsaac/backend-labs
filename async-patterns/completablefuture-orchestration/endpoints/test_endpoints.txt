@@ -1,0 +1,16 @@
+# Phase A – thenCombine
+curl -X GET http://localhost:8080/api/customers/phase-a
+
+# Phase B – thenCompose
+curl -X GET http://localhost:8080/api/customers/phase-b
+
+# Phase C – allOf and anyOf
+curl -X GET http://localhost:8080/api/customers/phase-c/all-of
+curl -X GET http://localhost:8080/api/customers/phase-c/any-of
+
+# Phase D – thenAcceptBoth and runAfterBoth
+curl -X GET http://localhost:8080/api/customers/phase-d/accept-both
+curl -X GET http://localhost:8080/api/customers/phase-d/run-after-both
+
+# Phase E – handle, exceptionally, whenComplete
+curl -X GET http://localhost:8080/api/customers/phase-e
