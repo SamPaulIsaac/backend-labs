@@ -1,0 +1,26 @@
+id,name,email,status
+101,John Doe,john@example.com,ACTIVE
+102,Jane Smith,jane@example.com,ACTIVE
+103,Bob Marley,bob@example.com,ACTIVE
+104,Alice Cooper,,INACTIVE
+105,Charlie Puth,,INACTIVE
+106,David Guetta,david@example.com,ACTIVE
+107,Ella Fitzgerald,ella@example.com,ACTIVE
+108,Frank Ocean,,INACTIVE
+109,Gwen Stefani,gwen@example.com,ACTIVE
+110,Hans Zimmer,hans@example.com,ACTIVE
+111,Iggy Azalea,,INACTIVE
+112,Jack White,,INACTIVE
+113,Karen O,karen@example.com,ACTIVE
+114,Liam Gallagher,,INACTIVE
+115,Miley Cyrus,,INACTIVE
+116,Nina Simone,nina@example.com,ACTIVE
+117,Oscar Isaac,,INACTIVE
+118,Prince Rogers,prince@example.com,ACTIVE
+119,Quincy Jones,,INACTIVE
+120,Rihanna Fenty,rihanna@example.com,ACTIVE
+121,Sam Smith,,INACTIVE
+122,Taylor Swift,taylor@example.com,ACTIVE
+123,Usher Raymond,,INACTIVE
+124,Van Morrison,van@example.com,ACTIVE
+125,Whitney Houston,,INACTIVE
